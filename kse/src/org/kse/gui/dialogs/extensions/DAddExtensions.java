@@ -86,6 +86,7 @@ import org.kse.gui.JEscDialog;
 import org.kse.gui.JKseTable;
 import org.kse.gui.PlatformUtil;
 import org.kse.gui.error.DError;
+import org.kse.utilities.io.HexUtil;
 import org.kse.utilities.oid.ObjectIdComparator;
 import org.kse.utilities.os.OperatingSystem;
 
@@ -568,6 +569,9 @@ public class DAddExtensions extends JEscDialog {
 		case SUBJECT_KEY_IDENTIFIER:
 			dExtension = new DSubjectKeyIdentifier(this, subjectPublicKey);
 			break;
+		case CUSTOM:
+			dExtension = new DCustomExtension(this, subjectPublicKey);
+			break;
 		default:
 			return;
 		}
@@ -588,7 +592,11 @@ public class DAddExtensions extends JEscDialog {
 			return;
 		}
 
-		extensions.addExtension(extensionTypeToAdd.oid(), isCritical, extensionValueOctet);
+		if (extensionTypeToAdd.equals(X509ExtensionType.CUSTOM)){
+			extensions.addExtension(((DCustomExtension)dExtension).getOid(), isCritical, dExtension.getValue());
+		} else {
+			extensions.addExtension(extensionTypeToAdd.oid(), isCritical, extensionValueOctet);
+		}
 
 		reloadExtensionsTable();
 		selectExtensionInTable(extensionTypeToAdd.oid());
