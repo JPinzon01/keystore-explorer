@@ -34,6 +34,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -45,16 +46,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.bouncycastle.asn1.ASN1Encoding;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.x509.AccessDescription;
-import org.bouncycastle.asn1.x509.GeneralName;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.util.encoders.Hex;
 import org.kse.gui.PlatformUtil;
-import org.kse.gui.crypto.JKeyIdentifier;
-import org.kse.gui.crypto.generalname.JGeneralName;
-import org.kse.gui.error.DError;
 import org.kse.gui.oid.JObjectId;
 
 
@@ -70,14 +63,19 @@ public class DCustomExtension extends DExtension {
 
 	private static final String CANCEL_KEY = "CANCEL_KEY";
 
+	private static final String[] EXTENSION_TYPE = new String[] { "String", "int" };
 	private JPanel jpCustomExtension;
+
 	private JLabel jlCustomExtensionId;
 	private JObjectId joiCustomExtensionId;
-	
+
+	private JLabel jlCustomExtensionType;
+	private JComboBox<?> jcbCustomExtensionType;
+
 	private JLabel jlCustomExtensionValue;
 	private JTextField jtfCustomExtensionValue;
-	
-	
+
+
 	private JPanel jpButtons;
 	private JButton jbOK;
 	private JButton jbCancel;
@@ -126,7 +124,7 @@ public class DCustomExtension extends DExtension {
 		gbc_jlCustomExtensionId.insets = new Insets(5, 5, 5, 5);
 		gbc_jlCustomExtensionId.anchor = GridBagConstraints.EAST;
 
-		joiCustomExtensionId = new JObjectId(res.getString("DCustomExtension.joiCustomExtensionId.Text"));
+		joiCustomExtensionId = new JObjectId(res.getString("DCustomExtension.joiCustomExtensionId.text"));
 
 		GridBagConstraints gbc_joiCustomExtensionId = new GridBagConstraints();
 		gbc_joiCustomExtensionId.gridx = 1;
@@ -136,11 +134,33 @@ public class DCustomExtension extends DExtension {
 		gbc_joiCustomExtensionId.insets = new Insets(5, 5, 5, 5);
 		gbc_joiCustomExtensionId.anchor = GridBagConstraints.WEST;
 
+		jlCustomExtensionType = new JLabel(res.getString("DCustomExtension.jlCustomExtensionType.text"));
+
+		GridBagConstraints gbc_jlCustomExtensionType = new GridBagConstraints();
+		gbc_jlCustomExtensionType.gridx = 0;
+		gbc_jlCustomExtensionType.gridy = 1;
+		gbc_jlCustomExtensionType.gridwidth = 1;
+		gbc_jlCustomExtensionType.gridheight = 1;
+		gbc_jlCustomExtensionType.insets = new Insets(5, 5, 5, 5);
+		gbc_jlCustomExtensionType.anchor = GridBagConstraints.EAST;
+
+		jcbCustomExtensionType = new JComboBox<>(EXTENSION_TYPE);
+
+		GridBagConstraints gbc_jcbCustomExtensionType = new GridBagConstraints();
+		gbc_jcbCustomExtensionType.gridx = 1;
+		gbc_jcbCustomExtensionType.gridy = 1;
+		gbc_jcbCustomExtensionType.gridwidth = 1;
+		gbc_jcbCustomExtensionType.gridheight = 1;
+		gbc_jcbCustomExtensionType.insets = new Insets(5, 5, 5, 5);
+		gbc_jcbCustomExtensionType.anchor = GridBagConstraints.WEST;
+
+
+
 		jlCustomExtensionValue = new JLabel(res.getString("DCustomExtension.jlCustomExtensionValue.text"));
 
 		GridBagConstraints gbc_jlCustomExtensionValue = new GridBagConstraints();
 		gbc_jlCustomExtensionValue.gridx = 0;
-		gbc_jlCustomExtensionValue.gridy = 1;
+		gbc_jlCustomExtensionValue.gridy = 2;
 		gbc_jlCustomExtensionValue.gridwidth = 1;
 		gbc_jlCustomExtensionValue.gridheight = 1;
 		gbc_jlCustomExtensionValue.insets = new Insets(5, 5, 5, 5);
@@ -150,7 +170,7 @@ public class DCustomExtension extends DExtension {
 
 		GridBagConstraints gbc_jtfCustomExtensionValue = new GridBagConstraints();
 		gbc_jtfCustomExtensionValue.gridx = 1;
-		gbc_jtfCustomExtensionValue.gridy = 1;
+		gbc_jtfCustomExtensionValue.gridy = 2;
 		gbc_jtfCustomExtensionValue.gridwidth = 1;
 		gbc_jtfCustomExtensionValue.gridheight = 1;
 		gbc_jtfCustomExtensionValue.insets = new Insets(5, 5, 5, 5);
@@ -163,10 +183,12 @@ public class DCustomExtension extends DExtension {
 
 		jpCustomExtension.add(jlCustomExtensionId, gbc_jlCustomExtensionId);
 		jpCustomExtension.add(joiCustomExtensionId, gbc_joiCustomExtensionId);
+		jpCustomExtension.add(jlCustomExtensionType, gbc_jlCustomExtensionType);
+		jpCustomExtension.add(jcbCustomExtensionType, gbc_jcbCustomExtensionType);
 		jpCustomExtension.add(jlCustomExtensionValue, gbc_jlCustomExtensionValue);
 		jpCustomExtension.add(jtfCustomExtensionValue, gbc_jtfCustomExtensionValue);
 
-		
+
 		jbOK = new JButton(res.getString("DCustomExtension.jbOK.text"));
 		jbOK.addActionListener(new ActionListener() {
 			@Override
@@ -233,7 +255,7 @@ public class DCustomExtension extends DExtension {
 					JOptionPane.WARNING_MESSAGE);
 			return;
 		} else {
-			value = Hex.decode(customExtensionValueStr);	
+			value = Hex.decode(customExtensionValueStr);
 		}
 
 		closeDialog();

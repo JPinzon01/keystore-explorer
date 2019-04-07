@@ -352,7 +352,7 @@ public enum X509ExtensionType {
 	GO_CT_SCTS("1.3.6.1.4.1.11129.2.4.2", "SignedCertificateTimestampList"),
 
 	CUSTOM("1", "custom"),
-	
+
 	UNKNOWN("0", "unknown");
 
 
